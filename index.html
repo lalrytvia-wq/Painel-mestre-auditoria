@@ -30,6 +30,7 @@
             --dev-purple: #9d4edd;
             --dev-purple-glow: #c77dff;
             --dev-border: #3c096c;
+            --error-red: #ff5555;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -192,6 +193,42 @@
             background: #f9f9f9; color: #999;
         }
 
+        /* --- ERROR MODAL --- */
+        #error-modal-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 20000;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        #error-modal-wrapper.visible { display: flex; animation: fadeIn 0.3s ease; }
+        
+        .error-modal {
+            background: #1e1e1e; color: #d4d4d4; width: 650px; max-width: 90%;
+            border: 1px solid var(--error-red); border-left: 6px solid var(--error-red);
+            border-radius: 6px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
+        }
+        .error-header {
+            background: #2d2d2d; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .error-title { font-weight: bold; color: var(--error-red); display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .error-close { background: none; border: none; color: #999; font-size: 1.2rem; cursor: pointer; }
+        .error-close:hover { color: white; }
+        
+        .error-body { padding: 25px; overflow-y: auto; max-height: 60vh; }
+        .error-msg-box {
+            background: #141414; padding: 15px; border-radius: 4px; border: 1px solid #333;
+            color: #ff8080; margin-bottom: 20px; white-space: pre-wrap; word-break: break-word;
+        }
+        .solution-box {
+            background: #1b261b; border: 1px solid #2e7d32; padding: 15px; border-radius: 4px;
+        }
+        .solution-title { color: #4caf50; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; text-transform: uppercase; }
+        .solution-text { font-size: 0.95rem; line-height: 1.5; color: #e8f5e9; }
+
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     </style>
 </head>
@@ -282,6 +319,25 @@
                     <div id="insight-content" class="insight-text"></div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- ERROR MODAL -->
+    <div id="error-modal-wrapper">
+        <div class="error-modal">
+            <div class="error-header">
+                <div class="error-title"><i class="fas fa-bug"></i> ERRO DE EXECUÇÃO</div>
+                <button class="error-close" onclick="closeErrorModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="error-body">
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;">Ocorreu um erro ao tentar executar o código do módulo:</p>
+                <div class="error-msg-box" id="error-msg-content">Carregando detalhes...</div>
+                
+                <div class="solution-box">
+                    <div class="solution-title"><i class="fas fa-lightbulb"></i> Diagnóstico / Solução Sugerida</div>
+                    <div class="solution-text" id="solution-text-content">Analisando...</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -920,6 +976,13 @@
             }
         });
         
+        // Listener global de mensagens para capturar erros do iframe
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'CODE_ERROR') {
+                showErrorModal(e.data.details);
+            }
+        });
+        
         renderSidebar();
     }
 
@@ -961,18 +1024,34 @@
     }
 
     /**
-     * EXECUÇÃO DE CÓDIGO (SANDBOXED)
+     * EXECUÇÃO DE CÓDIGO (SANDBOXED + ERROR HANDLING)
      */
     function runCode() {
         const code = document.getElementById('code-editor').value;
         const frame = document.getElementById('preview-frame');
         
-        // Injetar variáveis globais do contexto pai para o iframe
+        // Script de injeção de erros e variáveis globais
         const injection = `
             <script>
                 window.__firebase_config = '${window.__firebase_config || ""}';
                 window.__app_id = '${window.__app_id || "auditoria-compliance"}';
                 window.__initial_auth_token = '${window.__initial_auth_token || ""}';
+
+                // Monitor de Erros
+                window.onerror = function(message, source, lineno, colno, error) {
+                    window.parent.postMessage({
+                        type: 'CODE_ERROR',
+                        details: { message, source, lineno, colno, stack: error ? error.stack : '' }
+                    }, '*');
+                    return false;
+                };
+
+                window.onunhandledrejection = function(event) {
+                    window.parent.postMessage({
+                        type: 'CODE_ERROR',
+                        details: { message: 'Promise Rejection: ' + event.reason, source: 'Async/Promise', lineno: 0, colno: 0, stack: '' }
+                    }, '*');
+                };
             <\/script>
         `;
         
@@ -988,6 +1067,33 @@
         }
 
         frame.srcdoc = fullCode;
+    }
+
+    /**
+     * UI DE TRATAMENTO DE ERROS
+     */
+    function showErrorModal(details) {
+        // Diagnóstico simples baseado na mensagem de erro
+        let solution = "Verifique a sintaxe e a lógica do seu código.";
+        const msg = details.message.toLowerCase();
+
+        if (msg.includes('is not defined')) {
+            solution = "Você está tentando usar uma variável ou biblioteca que não foi declarada ou importada. Verifique se importou scripts como React, Firebase ou Tailwind no <head>.";
+        } else if (msg.includes('token') || msg.includes('unexpected') || msg.includes('syntax')) {
+            solution = "Erro de sintaxe. Verifique se esqueceu de fechar parênteses ')', chaves '}' ou se há vírgulas sobrando em objetos/arrays.";
+        } else if (msg.includes('null') || msg.includes('undefined')) {
+            solution = "Você está tentando acessar uma propriedade de algo que não existe (null/undefined). Verifique se os elementos HTML já foram carregados ou use verificações como 'if (variavel)' antes.";
+        } else if (msg.includes('firebase')) {
+            solution = "Erro relacionado ao Firebase. Verifique se as credenciais estão corretas e se a biblioteca foi carregada antes do seu script.";
+        }
+
+        document.getElementById('error-msg-content').innerText = `${details.message}\n\nLinha: ${details.lineno} | Coluna: ${details.colno}`;
+        document.getElementById('solution-text-content').innerText = solution;
+        document.getElementById('error-modal-wrapper').classList.add('visible');
+    }
+
+    function closeErrorModal() {
+        document.getElementById('error-modal-wrapper').classList.remove('visible');
     }
 
     function setView(mode) {
