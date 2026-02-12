@@ -18,11 +18,18 @@
             --header-height: 50px;
             --toolbar-height: 50px;
             
-            /* Cores Estilo Imagem */
+            /* Cores Estilo Imagem Login */
             --login-bg: #f4f7f6;
             --input-bg: #eef3fb;
             --btn-red: #b71c1c;
             --border-color: #d1d5db;
+            
+            /* Cores Dev Mode */
+            --dev-bg: #0a0a0a;
+            --dev-surface: #141414;
+            --dev-purple: #9d4edd;
+            --dev-purple-glow: #c77dff;
+            --dev-border: #3c096c;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -41,7 +48,6 @@
         #login-wrapper {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--login-bg);
-            /* Simulação do padrão de fundo da imagem */
             background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
             background-size: 40px 40px;
             display: flex; justify-content: center; align-items: center; z-index: 9999;
@@ -57,85 +63,38 @@
             animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .login-title { 
-            font-size: 1.8rem; 
-            font-weight: 600; 
-            color: #374151; 
-            margin-bottom: 5px;
-        }
-
+        .login-title { font-size: 1.8rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
         .login-form { display: flex; flex-direction: column; gap: 20px; }
 
         .input-group {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
-            background: var(--input-bg);
+            display: flex; align-items: center; border: 1px solid var(--border-color);
+            border-radius: 6px; overflow: hidden; background: var(--input-bg);
         }
 
         .input-group i.main-icon {
-            padding: 12px 15px;
-            color: #6b7280;
-            background: #ffffff;
-            border-right: 1px solid var(--border-color);
-            min-width: 50px;
-            display: flex;
-            justify-content: center;
-            font-size: 0.9rem;
+            padding: 12px 15px; color: #6b7280; background: #ffffff;
+            border-right: 1px solid var(--border-color); min-width: 50px;
+            display: flex; justify-content: center; font-size: 0.9rem;
         }
 
-        .input-group input {
-            border: none;
-            background: transparent;
-            padding: 12px 15px;
-            flex: 1;
-            font-size: 0.95rem;
-            color: #4b5563;
-        }
-        
-        .input-group input::placeholder {
-            color: #9ca3af;
-        }
-
-        .toggle-password {
-            padding: 0 15px;
-            cursor: pointer;
-            color: #9ca3af;
-            font-size: 0.9rem;
-            background: transparent;
-        }
+        .input-group input { border: none; background: transparent; padding: 12px 15px; flex: 1; font-size: 0.95rem; color: #4b5563; }
+        .input-group input::placeholder { color: #9ca3af; }
+        .toggle-password { padding: 0 15px; cursor: pointer; color: #9ca3af; font-size: 0.9rem; background: transparent; }
 
         .login-btn { 
-            align-self: center;
-            padding: 10px 30px; 
-            background-color: var(--btn-red); 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: 500; 
-            cursor: pointer; 
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-            margin-top: 5px;
+            align-self: center; padding: 10px 30px; background-color: var(--btn-red); 
+            color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; 
+            display: flex; align-items: center; gap: 10px; font-size: 1.1rem; margin-top: 5px;
             transition: transform 0.1s, background 0.2s;
         }
         .login-btn:hover { background-color: #9b1616; transform: scale(1.02); }
-        .login-btn:active { transform: scale(0.98); }
 
         .login-error { color: #dc2626; font-size: 0.85rem; display: none; margin-top: -10px; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- DASHBOARD --- */
-        #dashboard-wrapper { 
-            display: none; flex-direction: column; height: 100%; width: 100%; 
-            transition: opacity 0.6s ease;
-            opacity: 0;
-        }
+        #dashboard-wrapper { display: none; flex-direction: column; height: 100%; width: 100%; transition: opacity 0.6s ease; opacity: 0; }
 
         header {
             background-color: var(--primary-color); color: var(--text-light); height: var(--header-height);
@@ -160,35 +119,34 @@
 
         .nav-item {
             display: flex; align-items: center; padding: 14px 18px; color: #555; text-decoration: none;
-            border-left: 4px solid transparent; cursor: pointer; transition: all 0.2s;
-            white-space: nowrap;
+            border-left: 4px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap;
         }
         .nav-item:hover { background-color: #f9f9f9; color: var(--primary-color); }
         .nav-item.active { background-color: var(--primary-light); border-left-color: var(--primary-color); color: var(--primary-color); font-weight: 700; }
         
         .nav-icon { 
-            min-width: 30px; 
-            text-align: center; 
-            font-size: 1.1rem; 
-            flex-shrink: 0; 
-            transition: color 0.3s ease; /* Transição suave de cor */
+            min-width: 30px; text-align: center; font-size: 1.1rem; flex-shrink: 0; 
+            transition: color 0.3s ease;
         }
         
-        /* Regra Solicitada: Ícones Vermelhos quando Minimizado */
-        body.sidebar-minimized .nav-icon {
-            color: var(--primary-color);
-        }
-
-        /* Regra Solicitada: Manter Vermelho se Ativo mesmo Maximizado */
-        .nav-item.active .nav-icon {
-            color: var(--primary-color);
-        }
+        body.sidebar-minimized .nav-icon { color: var(--primary-color); }
+        .nav-item.active .nav-icon { color: var(--primary-color); }
 
         .nav-text { margin-left: 10px; font-size: 0.85rem; font-weight: 500; opacity: 1; transition: opacity 0.2s; }
+        .nav-input { display: none; width: 100%; border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; padding: 2px 5px; }
         
         body.sidebar-minimized .nav-text { opacity: 0; pointer-events: none; width: 0; margin: 0; }
         body.sidebar-minimized .nav-item { justify-content: center; padding: 14px 0; }
-        body.sidebar-minimized .nav-icon { min-width: 0; margin: 0; }
+        
+        /* Modo Dev Sidebar */
+        body.dev-mode-active .nav-text { display: none; }
+        body.dev-mode-active .nav-input { display: block; }
+
+        .sidebar-footer { margin-top: auto; border-top: 1px solid #eee; padding: 10px 0; display: flex; flex-direction: column; }
+        .dev-gear-btn { padding: 14px 18px; color: #999; cursor: pointer; display: flex; align-items: center; gap: 10px; border: none; background: none; width: 100%; }
+        .dev-gear-btn:hover { color: var(--primary-color); }
+        .save-modules-btn { display: none; padding: 8px; background: #2e7d32; color: white; border: none; border-radius: 4px; margin: 5px 15px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+        body.dev-mode-active .save-modules-btn { display: block; }
 
         main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
 
@@ -197,61 +155,51 @@
             display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
             font-family: 'Consolas', monospace;
         }
-        .file-select {
-            padding: 6px; border: 1px solid var(--dev-border); border-radius: 4px; 
-            background-color: var(--dev-surface); color: var(--dev-purple-glow);
-        }
-
-        .action-btn {
-            padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: 1px solid var(--dev-border);
-            cursor: pointer; background-color: var(--dev-surface); color: var(--dev-purple-glow);
-        }
+        .file-select { padding: 6px; border: 1px solid var(--dev-border); border-radius: 4px; background-color: var(--dev-surface); color: var(--dev-purple-glow); }
+        .action-btn { padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: 1px solid var(--dev-border); cursor: pointer; background-color: var(--dev-surface); color: var(--dev-purple-glow); }
         .action-btn:hover { background-color: var(--dev-purple); color: #fff; }
 
         #notification {
             position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff;
             padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 10000;
-            display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: fadeIn 0.3s ease;
+            display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease;
         }
 
         #insight-bubble {
             position: absolute; bottom: 20px; right: 20px; width: 320px;
             background: white; border-top: 4px solid var(--primary-color);
             border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            padding: 15px; z-index: 50; display: none;
-            transition: transform 0.3s ease;
+            padding: 15px; z-index: 50; display: none; transition: transform 0.3s ease;
         }
         #insight-bubble.visible { display: block; animation: fadeIn 0.5s ease-out; }
         #insight-bubble.hiding { animation: fadeOut 0.5s ease-in forwards; }
-        
         .insight-category { font-size: 0.7rem; font-weight: 800; color: var(--primary-color); text-transform: uppercase; margin-bottom: 8px; display: block; }
         .insight-text { font-size: 0.85rem; color: #444; line-height: 1.4; padding-right: 20px; }
-        
-        .close-insight {
-            position: absolute; top: 8px; right: 10px; background: none; border: none;
-            color: #ccc; font-size: 1.2rem; cursor: pointer; line-height: 1; transition: color 0.2s;
-        }
-        .close-insight:hover { color: var(--primary-color); }
+        .close-insight { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #ccc; font-size: 1.2rem; cursor: pointer; }
 
         body.role-user .dev-only { display: none !important; }
-        body.role-user .file-select { display: none !important; }
         body.role-user .module-toolbar { background: #f8f9fa; border-bottom: 1px solid #ddd; }
 
         .content-area { flex: 1; position: relative; overflow: hidden; display: flex; }
         #code-editor { flex: 1; border: none; padding: 20px; background: #1e1e1e; color: #d4d4d4; display: none; font-family: monospace; resize: none; }
-        #preview-frame { flex: 1; border: none; background: white; display: none; width: 100%; height: 100%; }
+        
+        /* IFRAME COM PERMISSÕES AMPLIADAS PARA DOWNLOADS E PDF */
+        #preview-frame { 
+            flex: 1; border: none; background: white; display: none; width: 100%; height: 100%; 
+        }
 
         .empty-state {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: #f9f9f9; color: #999;
         }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
     </style>
 </head>
 <body class="role-user">
 
-    <!-- Login Estilo Exato da Imagem -->
+    <!-- Login -->
     <div id="login-wrapper">
         <div class="login-card">
             <div class="login-title">Acesso ao sistema</div>
@@ -273,7 +221,7 @@
         </div>
     </div>
 
-    <!-- Dashboard Principal -->
+    <!-- Dashboard -->
     <div id="dashboard-wrapper">
         <header>
             <div class="header-left">
@@ -289,34 +237,18 @@
         </header>
 
         <div class="main-container">
-            <!-- Menu Lateral -->
             <aside id="sidebar">
-                <div class="nav-item" onclick="selectModule('pops')" id="nav-pops" title="Controle de Criação de POPs">
-                    <i class="fas fa-file-contract nav-icon"></i><span class="nav-text">Controle de Criação de POPs</span>
+                <div id="nav-container">
+                    <!-- Dinâmico -->
                 </div>
-                <div class="nav-item" onclick="selectModule('laudo')" id="nav-laudo" title="Laudo 26 Auditoria e Compliance">
-                    <i class="fas fa-scale-balanced nav-icon"></i><span class="nav-text">Laudo 26 Auditoria e Compliance</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('ranking')" id="nav-ranking" title="Ranking Lojas Painel">
-                    <i class="fas fa-trophy nav-icon"></i><span class="nav-text">Ranking Lojas Painel</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('checklist')" id="nav-checklist" title="Check List Lojas">
-                    <i class="fas fa-list-check nav-icon"></i><span class="nav-text">Check List Lojas</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('inventario')" id="nav-inventario" title="Calendário de Inventários">
-                    <i class="fas fa-calendar-days nav-icon"></i><span class="nav-text">Calendário de Inventários</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('portaria')" id="nav-portaria" title="Sistema de Controle de Portaria">
-                    <i class="fas fa-id-card-clip nav-icon"></i><span class="nav-text">Sistema de Controle de Portaria</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('organograma')" id="nav-organograma" title="Organograma e Fluxograma">
-                    <i class="fas fa-sitemap nav-icon"></i><span class="nav-text">Organograma e Fluxograma</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('notificacoes')" id="nav-notificacoes" title="Notificações">
-                    <i class="fas fa-bell nav-icon"></i><span class="nav-text">Notificações</span>
-                </div>
-                <div class="nav-item" onclick="selectModule('paralegal')" id="nav-paralegal" title="Paralegal">
-                    <i class="fas fa-gavel nav-icon"></i><span class="nav-text">Paralegal</span>
+                
+                <div class="sidebar-footer dev-only">
+                    <button class="save-modules-btn" onclick="saveModuleLabels()">
+                        <i class="fas fa-check"></i> Salvar Alterações
+                    </button>
+                    <button class="dev-gear-btn" onclick="toggleDevMode()" title="Editar Nomes dos Módulos">
+                        <i class="fas fa-cog nav-icon"></i><span class="nav-text">Gerenciar Módulos</span>
+                    </button>
                 </div>
             </aside>
 
@@ -342,10 +274,10 @@
                         <p>Selecione um módulo no menu lateral para iniciar.</p>
                     </div>
                     <textarea id="code-editor" spellcheck="false"></textarea>
-                    <iframe id="preview-frame" sandbox="allow-scripts allow-modals allow-forms allow-same-origin"></iframe>
+                    <!-- SANDBOX COM PERMISSÃO DE DOWNLOADS E POPUPS -->
+                    <iframe id="preview-frame" sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-downloads allow-popups"></iframe>
                 </div>
 
-                <!-- Balão de Insights Aleatórios -->
                 <div id="insight-bubble">
                     <button class="close-insight" onclick="closeInsights()" title="Fechar insights">&times;</button>
                     <span id="insight-cat" class="insight-category"></span>
@@ -359,8 +291,20 @@
 
 <script>
     /**
-     * CONFIGURAÇÕES E DADOS DO SISTEMA
+     * CONFIGURAÇÃO DE MÓDULOS
      */
+    let modulesConfig = [
+        { id: 'pops', icon: 'fa-file-contract', label: 'Controle de Criação de POPs' },
+        { id: 'laudo', icon: 'fa-scale-balanced', label: 'Laudo 26 Auditoria e Compliance' },
+        { id: 'ranking', icon: 'fa-trophy', label: 'Ranking Lojas Painel' },
+        { id: 'checklist', icon: 'fa-list-check', label: 'Check List Lojas' },
+        { id: 'inventario', icon: 'fa-calendar-days', label: 'Calendário de Inventários' },
+        { id: 'portaria', icon: 'fa-id-card-clip', label: 'Sistema de Controle de Portaria' },
+        { id: 'organograma', icon: 'fa-sitemap', label: 'Organograma e Fluxograma' },
+        { id: 'notificacoes', icon: 'fa-bell', label: 'Notificações' },
+        { id: 'paralegal', icon: 'fa-gavel', label: 'Paralegal' }
+    ];
+
     let currentModule = null;
     let currentFileId = null;
     let currentView = 'run';
@@ -374,7 +318,6 @@
 
     const complianceInsights = [
         { cat: "🔎 COMPLIANCE", text: "Compliance não é apenas jurídico: É um sistema estruturado de prevenção de riscos regulatórios, reputacionais e operacionais." },
-        { cat: "🔎 COMPLIANCE", text: "Programas efetivos reduzem penalidades: A Lei Anticorrupção prevê benefícios para quem tem integridade estruturada." },
         { cat: "🏛 GOVERNANÇA", text: "Governança ≠ Gestão: Governança define direcionamento e supervisão. Gestão executa a estratégia." },
         { cat: "🌱 ESG", text: "ESG não é filantropia: É gestão de risco ambiental, social e reputacional com impacto financeiro direto." },
         { cat: "📊 AUDITORIA", text: "Auditoria não é caça-erro: É ferramenta de melhoria de controles e eficiência operacional." },
@@ -385,8 +328,43 @@
     /**
      * NAVEGAÇÃO E UI
      */
-    function toggleSidebar() {
-        document.body.classList.toggle('sidebar-minimized');
+    function renderSidebar() {
+        const container = document.getElementById('nav-container');
+        container.innerHTML = '';
+        modulesConfig.forEach(mod => {
+            const div = document.createElement('div');
+            div.className = `nav-item ${currentModule === mod.id ? 'active' : ''}`;
+            div.id = `nav-${mod.id}`;
+            div.onclick = () => selectModule(mod.id);
+            div.title = mod.label;
+            
+            div.innerHTML = `
+                <i class="fas ${mod.icon} nav-icon"></i>
+                <span class="nav-text">${mod.label}</span>
+                <input class="nav-input" value="${mod.label}" data-mod="${mod.id}" onclick="event.stopPropagation()">
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function toggleSidebar() { document.body.classList.toggle('sidebar-minimized'); }
+    
+    function toggleDevMode() { 
+        document.body.classList.toggle('dev-mode-active');
+        if(document.body.classList.contains('dev-mode-active')) showNotification("Modo de edição de nomes ativado.");
+    }
+
+    function saveModuleLabels() {
+        const inputs = document.querySelectorAll('.nav-input');
+        inputs.forEach(input => {
+            const modId = input.dataset.mod;
+            const mod = modulesConfig.find(m => m.id === modId);
+            if(mod) mod.label = input.value;
+        });
+        localStorage.setItem('compliance_modules_config', JSON.stringify(modulesConfig));
+        document.body.classList.remove('dev-mode-active');
+        renderSidebar();
+        showNotification("Nomes dos módulos salvos com sucesso!");
     }
 
     function togglePasswordVisibility() {
@@ -402,7 +380,7 @@
     }
 
     /**
-     * LÓGICA DE LOGIN E SESSÃO
+     * LOGIN
      */
     function attemptLogin() {
         const u = document.getElementById('login-user').value.trim();
@@ -421,9 +399,7 @@
                 startInsights();
             }, 500);
         } else {
-            const errorEl = document.getElementById('login-error');
-            errorEl.style.display = 'block';
-            // Efeito de tremer no erro
+            document.getElementById('login-error').style.display = 'block';
             const card = document.querySelector('.login-card');
             card.style.animation = 'none';
             void card.offsetWidth;
@@ -437,30 +413,33 @@
     }
 
     /**
-     * GESTÃO DE DADOS (LOCAL STORAGE)
+     * DADOS
      */
-    const DB_KEY = 'compliance_master_db'; 
-    let db = { pops: [], laudo: [], ranking: [], checklist: [], inventario: [], portaria: [], organograma: [], notificacoes: [], paralegal: [] };
+    const DB_KEY = 'compliance_master_db_v2'; 
+    let db = {};
 
     function initSystem() {
-        const saved = localStorage.getItem(DB_KEY);
-        if(saved) db = JSON.parse(saved);
+        // Carregar labels customizados
+        const savedConfig = localStorage.getItem('compliance_modules_config');
+        if (savedConfig) modulesConfig = JSON.parse(savedConfig);
+
+        const savedData = localStorage.getItem(DB_KEY);
+        if(savedData) db = JSON.parse(savedData);
         
-        const modules = Object.keys(db);
-        modules.forEach(mod => {
-            if(db[mod].length === 0) {
-                db[mod].push({id: Date.now().toString(), name: 'Documento Inicial', code: getDefaultTemplate(mod)});
+        modulesConfig.forEach(mod => {
+            if(!db[mod.id]) db[mod.id] = [];
+            if(db[mod.id].length === 0) {
+                db[mod.id].push({id: Date.now().toString(), name: 'Documento Inicial', code: getDefaultTemplate(mod.label)});
             }
         });
-        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        
+        renderSidebar();
     }
 
     function selectModule(modId) {
+        if(document.body.classList.contains('dev-mode-active')) return;
         currentModule = modId;
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        const navEl = document.getElementById(`nav-${modId}`);
-        if(navEl) navEl.classList.add('active');
-        
+        renderSidebar();
         updateFileSelector();
         const files = db[currentModule] || [];
         if (files.length > 0) {
@@ -494,10 +473,16 @@
         }
     }
 
+    /**
+     * EXECUÇÃO DE CÓDIGO (SANDBOXED)
+     */
     function runCode() {
         const code = document.getElementById('code-editor').value;
         const frame = document.getElementById('preview-frame');
-        frame.srcdoc = code;
+        
+        // Garante que o srcdoc seja um HTML completo para evitar bugs de PDF
+        const fullCode = code.includes('<html') ? code : `<!DOCTYPE html><html><body>${code}</body></html>`;
+        frame.srcdoc = fullCode;
     }
 
     function setView(mode) {
@@ -513,7 +498,7 @@
         if (file) {
             file.code = code;
             localStorage.setItem(DB_KEY, JSON.stringify(db));
-            showNotification("Arquivo salvo localmente.");
+            showNotification("Módulo atualizado com sucesso.");
         }
     }
 
@@ -522,13 +507,82 @@
         const name = prompt("Nome do arquivo:");
         if(!name) return;
         const newId = Date.now().toString();
-        db[currentModule].push({ id: newId, name: name, code: getDefaultTemplate(currentModule) });
+        db[currentModule].push({ id: newId, name: name, code: getDefaultTemplate(modulesConfig.find(m => m.id === currentModule).label) });
         localStorage.setItem(DB_KEY, JSON.stringify(db));
         updateFileSelector();
         document.getElementById('file-selector').value = newId;
         changeFile();
     }
 
+    /**
+     * TEMPLATES
+     */
+    function getDefaultTemplate(modName) {
+        return `<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${modName}</title>
+    <!-- Bibliotecas Padrão para PDF e UI -->
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
+    <style>
+        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        .export-btn { transition: all 0.2s; }
+        .export-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="p-8">
+    <div id="content-to-export" class="max-w-4xl mx-auto bg-white p-10 rounded-xl shadow-lg border border-gray-100">
+        <div class="flex justify-between items-center mb-10 border-b pb-5">
+            <div>
+                <h1 class="text-2xl font-bold text-red-900">${modName}</h1>
+                <p class="text-sm text-gray-500">Documento Gerado via Painel Compliance</p>
+            </div>
+            <i class="fas fa-shield-halved text-4xl text-red-800"></i>
+        </div>
+        
+        <div class="space-y-6 text-gray-700">
+            <p>Este ambiente é <strong>executável de forma independente</strong>. Você pode adicionar formulários, tabelas e botões de exportação.</p>
+            <div class="p-4 bg-gray-50 border-l-4 border-red-800 italic">
+                "A auditoria preventiva custa menos que a atuação corretiva."
+            </div>
+            <p>Clique no botão abaixo para testar a geração de PDF independente:</p>
+        </div>
+
+        <button onclick="exportToPDF()" class="mt-10 export-btn bg-red-800 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-3">
+            <i class="fas fa-file-pdf"></i> Exportar para PDF
+        </button>
+    </div>
+
+    <script>
+        async function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById('content-to-export');
+            
+            // Captura o elemento como imagem
+            const canvas = await html2canvas(element, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('${modName}.pdf');
+        }
+    <\/script>
+</body>
+</html>`;
+    }
+
+    /**
+     * INSIGHTS
+     */
     function startInsights() {
         if (insightTimer) clearInterval(insightTimer);
         showRandomInsight();
@@ -537,27 +591,17 @@
 
     function closeInsights() {
         const bubble = document.getElementById('insight-bubble');
-        if (insightTimer) {
-            clearInterval(insightTimer);
-            insightTimer = null;
-        }
+        if (insightTimer) { clearInterval(insightTimer); insightTimer = null; }
         bubble.classList.add('hiding');
-        setTimeout(() => {
-            bubble.classList.remove('visible', 'hiding');
-        }, 500);
+        setTimeout(() => { bubble.classList.remove('visible', 'hiding'); }, 500);
     }
 
     function showRandomInsight() {
         const bubble = document.getElementById('insight-bubble');
         if (bubble.classList.contains('visible')) {
             bubble.classList.add('hiding');
-            setTimeout(() => {
-                bubble.classList.remove('visible', 'hiding');
-                updateInsight();
-            }, 500);
-        } else {
-            updateInsight();
-        }
+            setTimeout(() => { bubble.classList.remove('visible', 'hiding'); updateInsight(); }, 500);
+        } else { updateInsight(); }
     }
 
     function updateInsight() {
@@ -579,20 +623,6 @@
         document.getElementById('code-editor').style.display = 'none';
         document.getElementById('preview-frame').style.display = 'none';
     }
-
-    function getDefaultTemplate(mod) {
-        return `<html><body style="font-family:sans-serif;padding:40px;text-align:center;">
-            <h2 style="color:#8B0000;">Módulo: \${mod}<\/h2>
-            <p>O conteúdo deste módulo será carregado aqui.<\/p>
-        <\/body><\/html>`;
-    }
 </script>
-<style>
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-</style>
 </body>
 </html>
