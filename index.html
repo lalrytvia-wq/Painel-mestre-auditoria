@@ -14,16 +14,15 @@
             --text-dark: #333;
             --text-light: #ffffff;
             --sidebar-width: 280px;
-            --sidebar-collapsed-width: 60px;
+            --sidebar-collapsed-width: 65px;
             --header-height: 50px;
             --toolbar-height: 50px;
             
-            /* Variáveis Modo Dev / Editor */
-            --dev-bg: #0a0a0a;
-            --dev-surface: #141414;
-            --dev-purple: #9d4edd;
-            --dev-purple-glow: #c77dff;
-            --dev-border: #3c096c;
+            /* Cores Estilo Imagem */
+            --login-bg: #f4f7f6;
+            --input-bg: #eef3fb;
+            --btn-red: #b71c1c;
+            --border-color: #d1d5db;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -38,38 +37,103 @@
             background-color: #f0f2f5;
         }
 
-        /* --- TELA DE LOGIN --- */
+        /* --- TELA DE LOGIN (ESTILO EXATO DA IMAGEM) --- */
         #login-wrapper {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #f0f2f5;
+            background-color: var(--login-bg);
+            /* Simulação do padrão de fundo da imagem */
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 40px 40px;
             display: flex; justify-content: center; align-items: center; z-index: 9999;
             transition: opacity 0.5s ease;
         }
 
         .login-card {
-            background: white; width: 100%; max-width: 360px; padding: 45px 35px;
-            border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            border: 2px solid #c62828; text-align: center; display: flex;
-            flex-direction: column; gap: 25px; animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            background: white; width: 100%; max-width: 420px; padding: 35px 45px;
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center; display: flex;
+            flex-direction: column; gap: 25px; 
+            border: 1px solid #e2e8f0;
+            animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .login-title { font-size: 1.4rem; font-weight: 800; color: #0d1b3e; text-transform: uppercase; }
-        .login-form { display: flex; flex-direction: column; gap: 15px; }
-        .login-form input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 6px; }
-        .login-btn { 
-            width: 100%; padding: 14px; background-color: #b71c1c; color: white; border: none; 
-            border-radius: 6px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+        .login-title { 
+            font-size: 1.8rem; 
+            font-weight: 600; 
+            color: #374151; 
+            margin-bottom: 5px;
         }
 
-        .login-error { color: #d32f2f; font-size: 0.85rem; display: none; margin-top: -10px; }
+        .login-form { display: flex; flex-direction: column; gap: 20px; }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            background: var(--input-bg);
+        }
+
+        .input-group i.main-icon {
+            padding: 12px 15px;
+            color: #6b7280;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            min-width: 50px;
+            display: flex;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            border: none;
+            background: transparent;
+            padding: 12px 15px;
+            flex: 1;
+            font-size: 0.95rem;
+            color: #4b5563;
+        }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+        .input-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .toggle-password {
+            padding: 0 15px;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            background: transparent;
+        }
+
+        .login-btn { 
+            align-self: center;
+            padding: 10px 30px; 
+            background-color: var(--btn-red); 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            margin-top: 5px;
+            transition: transform 0.1s, background 0.2s;
+        }
+        .login-btn:hover { background-color: #9b1616; transform: scale(1.02); }
+        .login-btn:active { transform: scale(0.98); }
+
+        .login-error { color: #dc2626; font-size: 0.85rem; display: none; margin-top: -10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- DASHBOARD --- */
         #dashboard-wrapper { 
             display: none; flex-direction: column; height: 100%; width: 100%; 
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transition: opacity 0.6s ease;
             opacity: 0;
         }
 
@@ -78,6 +142,9 @@
             display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 20;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .sidebar-toggle-btn { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; padding: 5px; border-radius: 4px; transition: background 0.2s; }
+        .sidebar-toggle-btn:hover { background: rgba(255,255,255,0.1); }
         header h1 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
         .user-info { font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 4px; }
         .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
@@ -86,19 +153,42 @@
 
         aside {
             width: var(--sidebar-width); background-color: white; border-right: 1px solid #e0e0e0;
-            display: flex; flex-direction: column; transition: width 0.3s ease; z-index: 10;
-            overflow-y: auto;
+            display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10;
+            overflow-y: auto; overflow-x: hidden;
         }
         body.sidebar-minimized aside { width: var(--sidebar-collapsed-width); }
 
         .nav-item {
             display: flex; align-items: center; padding: 14px 18px; color: #555; text-decoration: none;
             border-left: 4px solid transparent; cursor: pointer; transition: all 0.2s;
+            white-space: nowrap;
         }
         .nav-item:hover { background-color: #f9f9f9; color: var(--primary-color); }
         .nav-item.active { background-color: var(--primary-light); border-left-color: var(--primary-color); color: var(--primary-color); font-weight: 700; }
-        .nav-icon { min-width: 30px; text-align: center; font-size: 1.1rem; }
-        .nav-text { margin-left: 10px; white-space: nowrap; font-size: 0.85rem; font-weight: 500; }
+        
+        .nav-icon { 
+            min-width: 30px; 
+            text-align: center; 
+            font-size: 1.1rem; 
+            flex-shrink: 0; 
+            transition: color 0.3s ease; /* Transição suave de cor */
+        }
+        
+        /* Regra Solicitada: Ícones Vermelhos quando Minimizado */
+        body.sidebar-minimized .nav-icon {
+            color: var(--primary-color);
+        }
+
+        /* Regra Solicitada: Manter Vermelho se Ativo mesmo Maximizado */
+        .nav-item.active .nav-icon {
+            color: var(--primary-color);
+        }
+
+        .nav-text { margin-left: 10px; font-size: 0.85rem; font-weight: 500; opacity: 1; transition: opacity 0.2s; }
+        
+        body.sidebar-minimized .nav-text { opacity: 0; pointer-events: none; width: 0; margin: 0; }
+        body.sidebar-minimized .nav-item { justify-content: center; padding: 14px 0; }
+        body.sidebar-minimized .nav-icon { min-width: 0; margin: 0; }
 
         main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
 
@@ -118,7 +208,6 @@
         }
         .action-btn:hover { background-color: var(--dev-purple); color: #fff; }
 
-        /* NOTIFICAÇÃO DO SISTEMA */
         #notification {
             position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff;
             padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 10000;
@@ -126,7 +215,6 @@
             animation: fadeIn 0.3s ease;
         }
 
-        /* INSIGHT BUBBLE */
         #insight-bubble {
             position: absolute; bottom: 20px; right: 20px; width: 320px;
             background: white; border-top: 4px solid var(--primary-color);
@@ -136,10 +224,16 @@
         }
         #insight-bubble.visible { display: block; animation: fadeIn 0.5s ease-out; }
         #insight-bubble.hiding { animation: fadeOut 0.5s ease-in forwards; }
+        
         .insight-category { font-size: 0.7rem; font-weight: 800; color: var(--primary-color); text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .insight-text { font-size: 0.85rem; color: #444; line-height: 1.4; }
+        .insight-text { font-size: 0.85rem; color: #444; line-height: 1.4; padding-right: 20px; }
+        
+        .close-insight {
+            position: absolute; top: 8px; right: 10px; background: none; border: none;
+            color: #ccc; font-size: 1.2rem; cursor: pointer; line-height: 1; transition: color 0.2s;
+        }
+        .close-insight:hover { color: var(--primary-color); }
 
-        /* ESTADOS DE VISIBILIDADE POR CARGO */
         body.role-user .dev-only { display: none !important; }
         body.role-user .file-select { display: none !important; }
         body.role-user .module-toolbar { background: #f8f9fa; border-bottom: 1px solid #ddd; }
@@ -157,15 +251,24 @@
 </head>
 <body class="role-user">
 
-    <!-- Login -->
+    <!-- Login Estilo Exato da Imagem -->
     <div id="login-wrapper">
         <div class="login-card">
-            <div class="login-title">Sistema de Compliance</div>
+            <div class="login-title">Acesso ao sistema</div>
             <div class="login-form">
-                <input type="text" id="login-user" placeholder="Usuário">
-                <input type="password" id="login-pass" placeholder="Senha" onkeypress="if(event.key === 'Enter') attemptLogin()">
-                <div class="login-error" id="login-error">Credenciais inválidas.</div>
-                <button class="login-btn" onclick="attemptLogin()">Entrar</button>
+                <div class="input-group">
+                    <i class="fas fa-user main-icon"></i>
+                    <input type="text" id="login-user" placeholder="Digite seu Usuário">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock main-icon"></i>
+                    <input type="password" id="login-pass" placeholder="Digite sua Senha" onkeypress="if(event.key === 'Enter') attemptLogin()">
+                    <i class="fas fa-eye-slash toggle-password" onclick="togglePasswordVisibility()"></i>
+                </div>
+                <div class="login-error" id="login-error">Credenciais inválidas. Verifique seu usuário e senha.</div>
+                <button class="login-btn" onclick="attemptLogin()">
+                    <i class="fas fa-right-to-bracket"></i> Entrar
+                </button>
             </div>
         </div>
     </div>
@@ -173,7 +276,12 @@
     <!-- Dashboard Principal -->
     <div id="dashboard-wrapper">
         <header>
-            <h1><i class="fas fa-shield-halved"></i> Compliance & Auditoria Interna</h1>
+            <div class="header-left">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Maximizar/Minimizar Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1><i class="fas fa-shield-halved"></i> Compliance & Auditoria Interna</h1>
+            </div>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span id="user-display" class="user-info"></span>
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
@@ -183,34 +291,36 @@
         <div class="main-container">
             <!-- Menu Lateral -->
             <aside id="sidebar">
-                <div class="nav-item" onclick="selectModule('pops')" id="nav-pops">
+                <div class="nav-item" onclick="selectModule('pops')" id="nav-pops" title="Controle de Criação de POPs">
                     <i class="fas fa-file-contract nav-icon"></i><span class="nav-text">Controle de Criação de POPs</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('laudo')" id="nav-laudo">
+                <div class="nav-item" onclick="selectModule('laudo')" id="nav-laudo" title="Laudo 26 Auditoria e Compliance">
                     <i class="fas fa-scale-balanced nav-icon"></i><span class="nav-text">Laudo 26 Auditoria e Compliance</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('ranking')" id="nav-ranking">
+                <div class="nav-item" onclick="selectModule('ranking')" id="nav-ranking" title="Ranking Lojas Painel">
                     <i class="fas fa-trophy nav-icon"></i><span class="nav-text">Ranking Lojas Painel</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('checklist')" id="nav-checklist">
+                <div class="nav-item" onclick="selectModule('checklist')" id="nav-checklist" title="Check List Lojas">
                     <i class="fas fa-list-check nav-icon"></i><span class="nav-text">Check List Lojas</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('inventario')" id="nav-inventario">
+                <div class="nav-item" onclick="selectModule('inventario')" id="nav-inventario" title="Calendário de Inventários">
                     <i class="fas fa-calendar-days nav-icon"></i><span class="nav-text">Calendário de Inventários</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('portaria')" id="nav-portaria">
+                <div class="nav-item" onclick="selectModule('portaria')" id="nav-portaria" title="Sistema de Controle de Portaria">
                     <i class="fas fa-id-card-clip nav-icon"></i><span class="nav-text">Sistema de Controle de Portaria</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('notificacoes')" id="nav-notificacoes">
+                <div class="nav-item" onclick="selectModule('organograma')" id="nav-organograma" title="Organograma e Fluxograma">
+                    <i class="fas fa-sitemap nav-icon"></i><span class="nav-text">Organograma e Fluxograma</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('notificacoes')" id="nav-notificacoes" title="Notificações">
                     <i class="fas fa-bell nav-icon"></i><span class="nav-text">Notificações</span>
                 </div>
-                <div class="nav-item" onclick="selectModule('paralegal')" id="nav-paralegal">
+                <div class="nav-item" onclick="selectModule('paralegal')" id="nav-paralegal" title="Paralegal">
                     <i class="fas fa-gavel nav-icon"></i><span class="nav-text">Paralegal</span>
                 </div>
             </aside>
 
             <main>
-                <!-- Toolbar do Desenvolvedor/Admin -->
                 <div class="module-toolbar" id="toolbar">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <select id="file-selector" class="file-select" onchange="changeFile()">
@@ -237,6 +347,7 @@
 
                 <!-- Balão de Insights Aleatórios -->
                 <div id="insight-bubble">
+                    <button class="close-insight" onclick="closeInsights()" title="Fechar insights">&times;</button>
                     <span id="insight-cat" class="insight-category"></span>
                     <div id="insight-content" class="insight-text"></div>
                 </div>
@@ -272,12 +383,32 @@
     ];
 
     /**
+     * NAVEGAÇÃO E UI
+     */
+    function toggleSidebar() {
+        document.body.classList.toggle('sidebar-minimized');
+    }
+
+    function togglePasswordVisibility() {
+        const passInput = document.getElementById('login-pass');
+        const eyeIcon = document.querySelector('.toggle-password');
+        if (passInput.type === 'password') {
+            passInput.type = 'text';
+            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        } else {
+            passInput.type = 'password';
+            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        }
+    }
+
+    /**
      * LÓGICA DE LOGIN E SESSÃO
      */
     function attemptLogin() {
-        const u = document.getElementById('login-user').value;
-        const p = document.getElementById('login-pass').value;
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
         const valid = users.find(x => x.u.toLowerCase() === u.toLowerCase() && x.p === p);
+        
         if(valid) {
             document.getElementById('login-wrapper').style.opacity = '0';
             setTimeout(() => {
@@ -290,26 +421,31 @@
                 startInsights();
             }, 500);
         } else {
-            document.getElementById('login-error').style.display = 'block';
+            const errorEl = document.getElementById('login-error');
+            errorEl.style.display = 'block';
+            // Efeito de tremer no erro
+            const card = document.querySelector('.login-card');
+            card.style.animation = 'none';
+            void card.offsetWidth;
+            card.style.animation = 'shake 0.4s';
         }
     }
 
     function logout() {
         if (insightTimer) clearInterval(insightTimer);
-        location.reload(); // Recarrega para limpar estados
+        location.reload(); 
     }
 
     /**
      * GESTÃO DE DADOS (LOCAL STORAGE)
      */
     const DB_KEY = 'compliance_master_db'; 
-    let db = { pops: [], laudo: [], ranking: [], checklist: [], inventario: [], portaria: [], notificacoes: [], paralegal: [] };
+    let db = { pops: [], laudo: [], ranking: [], checklist: [], inventario: [], portaria: [], organograma: [], notificacoes: [], paralegal: [] };
 
     function initSystem() {
         const saved = localStorage.getItem(DB_KEY);
         if(saved) db = JSON.parse(saved);
         
-        // Inicializa arquivos padrão se vazios
         const modules = Object.keys(db);
         modules.forEach(mod => {
             if(db[mod].length === 0) {
@@ -319,9 +455,6 @@
         localStorage.setItem(DB_KEY, JSON.stringify(db));
     }
 
-    /**
-     * NAVEGAÇÃO ENTRE MÓDULOS
-     */
     function selectModule(modId) {
         currentModule = modId;
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -361,9 +494,6 @@
         }
     }
 
-    /**
-     * ENGINE DE EXECUÇÃO
-     */
     function runCode() {
         const code = document.getElementById('code-editor').value;
         const frame = document.getElementById('preview-frame');
@@ -387,12 +517,34 @@
         }
     }
 
-    /**
-     * COMPONENTES DE UI
-     */
+    function createNewFile() {
+        if(!currentModule) return alert("Selecione um módulo.");
+        const name = prompt("Nome do arquivo:");
+        if(!name) return;
+        const newId = Date.now().toString();
+        db[currentModule].push({ id: newId, name: name, code: getDefaultTemplate(currentModule) });
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        updateFileSelector();
+        document.getElementById('file-selector').value = newId;
+        changeFile();
+    }
+
     function startInsights() {
+        if (insightTimer) clearInterval(insightTimer);
         showRandomInsight();
         insightTimer = setInterval(showRandomInsight, 15000);
+    }
+
+    function closeInsights() {
+        const bubble = document.getElementById('insight-bubble');
+        if (insightTimer) {
+            clearInterval(insightTimer);
+            insightTimer = null;
+        }
+        bubble.classList.add('hiding');
+        setTimeout(() => {
+            bubble.classList.remove('visible', 'hiding');
+        }, 500);
     }
 
     function showRandomInsight() {
@@ -435,5 +587,12 @@
         <\/body><\/html>`;
     }
 </script>
+<style>
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+</style>
 </body>
 </html>
