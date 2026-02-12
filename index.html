@@ -190,7 +190,9 @@
         main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
 
         .module-toolbar {
-            height: var(--toolbar-height); background: var(--dev-bg); border-bottom: 1px solid #333;
+            height: var(--toolbar-height); 
+            background: #f8f9fa; /* Define fundo claro por padrão, mesmo em dev mode */
+            border-bottom: 1px solid #ddd;
             display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
             font-family: 'Consolas', monospace;
         }
