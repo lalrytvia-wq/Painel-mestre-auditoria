@@ -3,53 +3,437 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hub de Auditoria e Compliance</title>
+    <title>Compliance & Auditoria Interna</title>
+    <!-- Ícones e Fontes -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; display: flex; flex-direction: column; align-items: center; padding: 40px; }
-        h1 { color: #00e676; margin-bottom: 30px; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
-        .card { background-color: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #333; text-align: center; transition: transform 0.3s, border-color 0.3s; cursor: pointer; text-decoration: none; color: white; }
-        .card:hover { transform: translateY(-5px); border-color: #00e676; background-color: #252525; }
-        .card h3 { margin: 10px 0; font-size: 1.2rem; }
-        .card p { font-size: 0.9rem; color: #aaa; }
-        .icon { font-size: 40px; margin-bottom: 10px; display: block; }
+        :root {
+            --primary-color: #8B0000;
+            --primary-light: #fff0f0;
+            --secondary-color: #f8f9fa;
+            --text-dark: #333;
+            --text-light: #ffffff;
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 60px;
+            --header-height: 50px;
+            --toolbar-height: 50px;
+            
+            /* Variáveis Modo Dev / Editor */
+            --dev-bg: #0a0a0a;
+            --dev-surface: #141414;
+            --dev-purple: #9d4edd;
+            --dev-purple-glow: #c77dff;
+            --dev-border: #3c096c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f0f2f5;
+        }
+
+        /* --- TELA DE LOGIN --- */
+        #login-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #f0f2f5;
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .login-card {
+            background: white; width: 100%; max-width: 360px; padding: 45px 35px;
+            border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            border: 2px solid #c62828; text-align: center; display: flex;
+            flex-direction: column; gap: 25px; animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .login-title { font-size: 1.4rem; font-weight: 800; color: #0d1b3e; text-transform: uppercase; }
+        .login-form { display: flex; flex-direction: column; gap: 15px; }
+        .login-form input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 6px; }
+        .login-btn { 
+            width: 100%; padding: 14px; background-color: #b71c1c; color: white; border: none; 
+            border-radius: 6px; font-weight: 800; cursor: pointer; text-transform: uppercase;
+        }
+
+        .login-error { color: #d32f2f; font-size: 0.85rem; display: none; margin-top: -10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+
+        /* --- DASHBOARD --- */
+        #dashboard-wrapper { 
+            display: none; flex-direction: column; height: 100%; width: 100%; 
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 0;
+        }
+
+        header {
+            background-color: var(--primary-color); color: var(--text-light); height: var(--header-height);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .user-info { font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 4px; }
+        .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+
+        .main-container { display: flex; flex: 1; height: calc(100vh - var(--header-height)); overflow: hidden; }
+
+        aside {
+            width: var(--sidebar-width); background-color: white; border-right: 1px solid #e0e0e0;
+            display: flex; flex-direction: column; transition: width 0.3s ease; z-index: 10;
+            overflow-y: auto;
+        }
+        body.sidebar-minimized aside { width: var(--sidebar-collapsed-width); }
+
+        .nav-item {
+            display: flex; align-items: center; padding: 14px 18px; color: #555; text-decoration: none;
+            border-left: 4px solid transparent; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-item:hover { background-color: #f9f9f9; color: var(--primary-color); }
+        .nav-item.active { background-color: var(--primary-light); border-left-color: var(--primary-color); color: var(--primary-color); font-weight: 700; }
+        .nav-icon { min-width: 30px; text-align: center; font-size: 1.1rem; }
+        .nav-text { margin-left: 10px; white-space: nowrap; font-size: 0.85rem; font-weight: 500; }
+
+        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
+
+        .module-toolbar {
+            height: var(--toolbar-height); background: var(--dev-bg); border-bottom: 1px solid #333;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+            font-family: 'Consolas', monospace;
+        }
+        .file-select {
+            padding: 6px; border: 1px solid var(--dev-border); border-radius: 4px; 
+            background-color: var(--dev-surface); color: var(--dev-purple-glow);
+        }
+
+        .action-btn {
+            padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: 1px solid var(--dev-border);
+            cursor: pointer; background-color: var(--dev-surface); color: var(--dev-purple-glow);
+        }
+        .action-btn:hover { background-color: var(--dev-purple); color: #fff; }
+
+        /* NOTIFICAÇÃO DO SISTEMA */
+        #notification {
+            position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff;
+            padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 10000;
+            display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* INSIGHT BUBBLE */
+        #insight-bubble {
+            position: absolute; bottom: 20px; right: 20px; width: 320px;
+            background: white; border-top: 4px solid var(--primary-color);
+            border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 15px; z-index: 50; display: none;
+            transition: transform 0.3s ease;
+        }
+        #insight-bubble.visible { display: block; animation: fadeIn 0.5s ease-out; }
+        #insight-bubble.hiding { animation: fadeOut 0.5s ease-in forwards; }
+        .insight-category { font-size: 0.7rem; font-weight: 800; color: var(--primary-color); text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .insight-text { font-size: 0.85rem; color: #444; line-height: 1.4; }
+
+        /* ESTADOS DE VISIBILIDADE POR CARGO */
+        body.role-user .dev-only { display: none !important; }
+        body.role-user .file-select { display: none !important; }
+        body.role-user .module-toolbar { background: #f8f9fa; border-bottom: 1px solid #ddd; }
+
+        .content-area { flex: 1; position: relative; overflow: hidden; display: flex; }
+        #code-editor { flex: 1; border: none; padding: 20px; background: #1e1e1e; color: #d4d4d4; display: none; font-family: monospace; resize: none; }
+        #preview-frame { flex: 1; border: none; background: white; display: none; width: 100%; height: 100%; }
+
+        .empty-state {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #f9f9f9; color: #999;
+        }
     </style>
 </head>
-<body>
+<body class="role-user">
 
-    <h1>Central de Painéis - Auditoria</h1>
-
-    <div class="grid-container">
-        <a href="#" class="card">
-            <span class="icon">📋</span>
-            <h3>Controle de POPs</h3>
-            <p>Gestão e criação de procedimentos operacionais.</p>
-        </a>
-
-        <a href="#" class="card">
-            <span class="icon">⚖️</span>
-            <h3>Laudo 26</h3>
-            <p>Auditoria e Compliance detalhado.</p>
-        </a>
-
-        <a href="#" class="card">
-            <span class="icon">📊</span>
-            <h3>Ranking Lojas</h3>
-            <p>Visão geral de performance por unidade.</p>
-        </a>
-
-        <a href="#" class="card">
-            <span class="icon">📅</span>
-            <h3>Calendário</h3>
-            <p>Cronograma de inventários programados.</p>
-        </a>
-
-        <a href="#" class="card">
-            <span class="icon">🚪</span>
-            <h3>Portaria</h3>
-            <p>Sistema de controle de acesso e segurança.</p>
-        </a>
+    <!-- Login -->
+    <div id="login-wrapper">
+        <div class="login-card">
+            <div class="login-title">Sistema de Compliance</div>
+            <div class="login-form">
+                <input type="text" id="login-user" placeholder="Usuário">
+                <input type="password" id="login-pass" placeholder="Senha" onkeypress="if(event.key === 'Enter') attemptLogin()">
+                <div class="login-error" id="login-error">Credenciais inválidas.</div>
+                <button class="login-btn" onclick="attemptLogin()">Entrar</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Dashboard Principal -->
+    <div id="dashboard-wrapper">
+        <header>
+            <h1><i class="fas fa-shield-halved"></i> Compliance & Auditoria Interna</h1>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span id="user-display" class="user-info"></span>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Menu Lateral -->
+            <aside id="sidebar">
+                <div class="nav-item" onclick="selectModule('pops')" id="nav-pops">
+                    <i class="fas fa-file-contract nav-icon"></i><span class="nav-text">Controle de Criação de POPs</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('laudo')" id="nav-laudo">
+                    <i class="fas fa-scale-balanced nav-icon"></i><span class="nav-text">Laudo 26 Auditoria e Compliance</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('ranking')" id="nav-ranking">
+                    <i class="fas fa-trophy nav-icon"></i><span class="nav-text">Ranking Lojas Painel</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('checklist')" id="nav-checklist">
+                    <i class="fas fa-list-check nav-icon"></i><span class="nav-text">Check List Lojas</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('inventario')" id="nav-inventario">
+                    <i class="fas fa-calendar-days nav-icon"></i><span class="nav-text">Calendário de Inventários</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('portaria')" id="nav-portaria">
+                    <i class="fas fa-id-card-clip nav-icon"></i><span class="nav-text">Sistema de Controle de Portaria</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('notificacoes')" id="nav-notificacoes">
+                    <i class="fas fa-bell nav-icon"></i><span class="nav-text">Notificações</span>
+                </div>
+                <div class="nav-item" onclick="selectModule('paralegal')" id="nav-paralegal">
+                    <i class="fas fa-gavel nav-icon"></i><span class="nav-text">Paralegal</span>
+                </div>
+            </aside>
+
+            <main>
+                <!-- Toolbar do Desenvolvedor/Admin -->
+                <div class="module-toolbar" id="toolbar">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <select id="file-selector" class="file-select" onchange="changeFile()">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <button class="action-btn dev-only" onclick="createNewFile()">Novo Arquivo</button>
+                        <button class="action-btn dev-only" onclick="saveFile()">Salvar Alterações</button>
+                        <button class="action-btn dev-only" onclick="runCode()">Executar Agora</button>
+                    </div>
+                    <div class="dev-only" style="display:flex; gap:5px;">
+                        <button class="action-btn" onclick="setView('edit')">Código</button>
+                        <button class="action-btn" onclick="setView('run')">Visual</button>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div id="empty-state" class="empty-state">
+                        <i class="fas fa-folder-open" style="font-size:3rem; margin-bottom:10px;"></i>
+                        <p>Selecione um módulo no menu lateral para iniciar.</p>
+                    </div>
+                    <textarea id="code-editor" spellcheck="false"></textarea>
+                    <iframe id="preview-frame" sandbox="allow-scripts allow-modals allow-forms allow-same-origin"></iframe>
+                </div>
+
+                <!-- Balão de Insights Aleatórios -->
+                <div id="insight-bubble">
+                    <span id="insight-cat" class="insight-category"></span>
+                    <div id="insight-content" class="insight-text"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="notification"></div>
+
+<script>
+    /**
+     * CONFIGURAÇÕES E DADOS DO SISTEMA
+     */
+    let currentModule = null;
+    let currentFileId = null;
+    let currentView = 'run';
+    let insightTimer = null;
+
+    const users = [
+        {u:'Compliance', p:'1307', role:'admin'}, 
+        {u:'Tiago', p:'1307', role:'admin'},
+        {u:'Nathalia', p:'1234', role:'user'} 
+    ];
+
+    const complianceInsights = [
+        { cat: "🔎 COMPLIANCE", text: "Compliance não é apenas jurídico: É um sistema estruturado de prevenção de riscos regulatórios, reputacionais e operacionais." },
+        { cat: "🔎 COMPLIANCE", text: "Programas efetivos reduzem penalidades: A Lei Anticorrupção prevê benefícios para quem tem integridade estruturada." },
+        { cat: "🏛 GOVERNANÇA", text: "Governança ≠ Gestão: Governança define direcionamento e supervisão. Gestão executa a estratégia." },
+        { cat: "🌱 ESG", text: "ESG não é filantropia: É gestão de risco ambiental, social e reputacional com impacto financeiro direto." },
+        { cat: "📊 AUDITORIA", text: "Auditoria não é caça-erro: É ferramenta de melhoria de controles e eficiência operacional." },
+        { cat: "⚙️ PROCESSOS", text: "SLA e Governança: Tempo pactuado e mensurado aumenta a previsibilidade organizacional." },
+        { cat: "📈 DADO RELEVANTE", text: "Empresas perdem, em média, 5% da receita anual com fraudes internas (Fonte: ACFE)." }
+    ];
+
+    /**
+     * LÓGICA DE LOGIN E SESSÃO
+     */
+    function attemptLogin() {
+        const u = document.getElementById('login-user').value;
+        const p = document.getElementById('login-pass').value;
+        const valid = users.find(x => x.u.toLowerCase() === u.toLowerCase() && x.p === p);
+        if(valid) {
+            document.getElementById('login-wrapper').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-wrapper').style.display = 'none';
+                document.getElementById('dashboard-wrapper').style.display = 'flex';
+                setTimeout(() => { document.getElementById('dashboard-wrapper').style.opacity = '1'; }, 50);
+                document.getElementById('user-display').innerText = `Olá, ${valid.u}`;
+                document.body.className = 'role-' + valid.role;
+                initSystem();
+                startInsights();
+            }, 500);
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    }
+
+    function logout() {
+        if (insightTimer) clearInterval(insightTimer);
+        location.reload(); // Recarrega para limpar estados
+    }
+
+    /**
+     * GESTÃO DE DADOS (LOCAL STORAGE)
+     */
+    const DB_KEY = 'compliance_master_db'; 
+    let db = { pops: [], laudo: [], ranking: [], checklist: [], inventario: [], portaria: [], notificacoes: [], paralegal: [] };
+
+    function initSystem() {
+        const saved = localStorage.getItem(DB_KEY);
+        if(saved) db = JSON.parse(saved);
+        
+        // Inicializa arquivos padrão se vazios
+        const modules = Object.keys(db);
+        modules.forEach(mod => {
+            if(db[mod].length === 0) {
+                db[mod].push({id: Date.now().toString(), name: 'Documento Inicial', code: getDefaultTemplate(mod)});
+            }
+        });
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+    }
+
+    /**
+     * NAVEGAÇÃO ENTRE MÓDULOS
+     */
+    function selectModule(modId) {
+        currentModule = modId;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        const navEl = document.getElementById(`nav-${modId}`);
+        if(navEl) navEl.classList.add('active');
+        
+        updateFileSelector();
+        const files = db[currentModule] || [];
+        if (files.length > 0) {
+            document.getElementById('file-selector').value = files[0].id;
+            changeFile();
+        } else {
+            showEmptyState();
+        }
+    }
+
+    function updateFileSelector() {
+        const sel = document.getElementById('file-selector');
+        sel.innerHTML = '<option value="">Selecione um Arquivo...</option>';
+        (db[currentModule] || []).forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f.id; opt.innerText = f.name;
+            sel.appendChild(opt);
+        });
+    }
+
+    function changeFile() {
+        const id = document.getElementById('file-selector').value;
+        if(!id) return showEmptyState();
+        currentFileId = id;
+        const file = db[currentModule].find(f => f.id === id);
+        if (file) {
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('code-editor').value = file.code;
+            runCode();
+            setView(document.body.classList.contains('role-user') ? 'run' : currentView);
+        }
+    }
+
+    /**
+     * ENGINE DE EXECUÇÃO
+     */
+    function runCode() {
+        const code = document.getElementById('code-editor').value;
+        const frame = document.getElementById('preview-frame');
+        frame.srcdoc = code;
+    }
+
+    function setView(mode) {
+        currentView = mode;
+        document.getElementById('code-editor').style.display = mode === 'edit' ? 'block' : 'none';
+        document.getElementById('preview-frame').style.display = mode === 'run' ? 'block' : 'none';
+    }
+
+    function saveFile() {
+        if(!currentFileId || !currentModule) return;
+        const code = document.getElementById('code-editor').value;
+        const file = db[currentModule].find(f => f.id === currentFileId);
+        if (file) {
+            file.code = code;
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            showNotification("Arquivo salvo localmente.");
+        }
+    }
+
+    /**
+     * COMPONENTES DE UI
+     */
+    function startInsights() {
+        showRandomInsight();
+        insightTimer = setInterval(showRandomInsight, 15000);
+    }
+
+    function showRandomInsight() {
+        const bubble = document.getElementById('insight-bubble');
+        if (bubble.classList.contains('visible')) {
+            bubble.classList.add('hiding');
+            setTimeout(() => {
+                bubble.classList.remove('visible', 'hiding');
+                updateInsight();
+            }, 500);
+        } else {
+            updateInsight();
+        }
+    }
+
+    function updateInsight() {
+        const bubble = document.getElementById('insight-bubble');
+        const insight = complianceInsights[Math.floor(Math.random() * complianceInsights.length)];
+        document.getElementById('insight-cat').innerText = insight.cat;
+        document.getElementById('insight-content').innerText = insight.text;
+        bubble.classList.add('visible');
+    }
+
+    function showNotification(msg) {
+        const n = document.getElementById('notification');
+        n.innerText = msg; n.style.display = 'block';
+        setTimeout(() => { n.style.display = 'none'; }, 3000);
+    }
+
+    function showEmptyState() {
+        document.getElementById('empty-state').style.display = 'flex';
+        document.getElementById('code-editor').style.display = 'none';
+        document.getElementById('preview-frame').style.display = 'none';
+    }
+
+    function getDefaultTemplate(mod) {
+        return `<html><body style="font-family:sans-serif;padding:40px;text-align:center;">
+            <h2 style="color:#8B0000;">Módulo: \${mod}<\/h2>
+            <p>O conteúdo deste módulo será carregado aqui.<\/p>
+        <\/body><\/html>`;
+    }
+</script>
 </body>
 </html>
