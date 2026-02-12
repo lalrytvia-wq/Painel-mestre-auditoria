@@ -159,6 +159,14 @@
         .action-btn { padding: 6px 12px; font-size: 0.8rem; border-radius: 4px; border: 1px solid var(--dev-border); cursor: pointer; background-color: var(--dev-surface); color: var(--dev-purple-glow); }
         .action-btn:hover { background-color: var(--dev-purple); color: #fff; }
 
+        /* CONTROLE DE VISIBILIDADE DAS FERRAMENTAS DEV */
+        .dev-tools-panel { display: none !important; } /* Oculto por padrão */
+        
+        /* Exibe quando o modo dev está ativo (ativado pelo botão 'Gerenciar Módulos') */
+        body.dev-mode-active .dev-tools-panel { display: inline-block !important; }
+        body.dev-mode-active div.dev-tools-panel { display: flex !important; } /* Para o container dos botões de visualização */
+        body.dev-mode-active select.dev-tools-panel { display: block !important; }
+
         #notification {
             position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff;
             padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 10000;
@@ -290,14 +298,15 @@
             <main>
                 <div class="module-toolbar" id="toolbar">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <select id="file-selector" class="file-select" onchange="changeFile()">
+                        <!-- Adicionada classe dev-tools-panel para controle de visibilidade -->
+                        <select id="file-selector" class="file-select dev-tools-panel" onchange="changeFile()">
                             <option value="">Selecione...</option>
                         </select>
-                        <button class="action-btn dev-only" onclick="createNewFile()">Novo Arquivo</button>
-                        <button class="action-btn dev-only" onclick="saveFile()">Salvar Alterações</button>
-                        <button class="action-btn dev-only" onclick="runCode()">Executar Agora</button>
+                        <button class="action-btn dev-tools-panel" onclick="createNewFile()">Novo Arquivo</button>
+                        <button class="action-btn dev-tools-panel" onclick="saveFile()">Salvar Alterações</button>
+                        <button class="action-btn dev-tools-panel" onclick="runCode()">Executar Agora</button>
                     </div>
-                    <div class="dev-only" style="display:flex; gap:5px;">
+                    <div class="dev-tools-panel" style="display:flex; gap:5px;">
                         <button class="action-btn" onclick="setView('edit')">Código</button>
                         <button class="action-btn" onclick="setView('run')">Visual</button>
                     </div>
@@ -1030,12 +1039,12 @@
         const code = document.getElementById('code-editor').value;
         const frame = document.getElementById('preview-frame');
         
-        // Script de injeção de erros e variáveis globais
+        // Use JSON.stringify for config to avoid syntax errors with quotes
         const injection = `
             <script>
-                window.__firebase_config = '${window.__firebase_config || ""}';
-                window.__app_id = '${window.__app_id || "auditoria-compliance"}';
-                window.__initial_auth_token = '${window.__initial_auth_token || ""}';
+                window.__firebase_config = ${JSON.stringify(window.__firebase_config || "")};
+                window.__app_id = ${JSON.stringify(window.__app_id || "auditoria-compliance")};
+                window.__initial_auth_token = ${JSON.stringify(window.__initial_auth_token || "")};
 
                 // Monitor de Erros
                 window.onerror = function(message, source, lineno, colno, error) {
@@ -1052,8 +1061,7 @@
                         details: { message: 'Promise Rejection: ' + event.reason, source: 'Async/Promise', lineno: 0, colno: 0, stack: '' }
                     }, '*');
                 };
-            <\/script>
-        `;
+            ` + '</' + 'script>'; // Break script tag to avoid parser error
         
         let fullCode = code;
         
